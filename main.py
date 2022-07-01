@@ -9,17 +9,12 @@ import random
 
 train_csv_path = "./exp_data/TACoS/train_clip-sentvec.pkl"
 test_csv_path = "./exp_data/TACoS/test_clip-sentvec.pkl"
-train_feature_dir = "G:/TALL by author/TACOS/Interval64_128_256_512_overlap0.8_c3d_fc6/"
-test_feature_dir = "G:/TALL by author/TACOS/Interval128_256_overlap0.8_c3d_fc6/"
+train_feature_dir = "D:/XuTongjie/TALL by author/TACOS/Interval64_128_256_512_overlap0.8_c3d_fc6/"
+test_feature_dir = "D:/XuTongjie/TALL by author/TACOS/Interval128_256_overlap0.8_c3d_fc6/"
 frames_info_path = "video_allframes_info.pkl"
 batch_size = 56
-epochs = 2
+epochs = 100
 test_result_output=open(os.path.join("./checkpoints/test_results.txt"), "w")
-
-trainloader = DataLoader(TrainingDataSet(train_feature_dir, train_csv_path, batch_size), batch_size=56, shuffle=True, num_workers=0)
-test_dataset = TestingDataSet(test_feature_dir, test_csv_path, 1)
-net = TALL().cuda()
-optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
 def setup_seed(seed):
     torch.manual_seed(seed)
@@ -34,6 +29,11 @@ best_R1_IOU5 = 0
 best_R5_IOU5 = 0
 best_R1_IOU5_epoch = 0
 best_R5_IOU5_epoch = 0
+
+trainloader = DataLoader(TrainingDataSet(train_feature_dir, train_csv_path, batch_size), batch_size=56, shuffle=True, num_workers=0)
+test_dataset = TestingDataSet(test_feature_dir, test_csv_path, 1)
+net = TALL().cuda()
+optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
 minn = 10000
 
@@ -199,7 +199,7 @@ def test(epoch):
         best_R5_IOU5_epoch = epoch
 
 if __name__ == '__main__':
-    for epoch in range(2):
+    for epoch in range(epochs):
         train(epoch)
         test(epoch)
     test_result_output.close()
